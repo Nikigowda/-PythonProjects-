@@ -1,1 +1,30 @@
+from requests_html import HTMLSession
+import csv
 
+s = HTMLSession()
+
+query = 'India'
+
+url = f'https://www.google.com/search?q=weather+{query}'
+
+r = s.get(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.47'})
+
+temp = r.html.find('span#wob_tm', first=True).text
+unit = r.html.find('div.vk_bk.wob-unit span.wob_t', first=True).text
+description = r.html.find('div.VQF4g', first=True).find('span#wob_dc', first=True).text
+
+
+data = [query, temp, unit, description]
+
+
+csv_file = 'weather_data.csv'
+
+
+with open(csv_file, mode='w', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerow(['Query', 'Temperature', 'Unit', 'Description']) 
+    writer.writerow(data)  
+
+print(query, temp, unit, description)
+
+print(f"Data has been saved in '{csv_file}' file.")
